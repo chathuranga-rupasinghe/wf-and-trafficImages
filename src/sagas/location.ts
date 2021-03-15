@@ -1,0 +1,27 @@
+import {takeLatest, put, all} from 'redux-saga/effects';
+
+import { FETCH_LOCATIONS, FETCH_LOCATIONS_NOT_OK, FETCH_LOCATIONS_OK } from '../action-types';
+import { fetchLocationsNotOk, fetchLocationsOk } from '../actions/location';
+import { fetchLocationsApi, fetchTraficImagesApi } from '../api';
+import {apiCall} from '../utils/fetch';
+import { formatLocationData } from '../utils/formatter';
+
+
+const location = function*() : any{
+  const [locationResponse, trafficImagesResponse] = yield all([
+    apiCall(fetchLocationsApi, {date_time: new Date().toISOString()}),
+    apiCall(fetchTraficImagesApi, {date_time: new Date().toISOString()})
+  ]);
+
+
+
+  if (trafficImagesResponse.data.api_info.status === 'healthy' && locationResponse.data.api_info.status === 'healthy') {
+    formatLocationData(trafficImagesResponse.data['items'][0]['cameras'], locationResponse.data);
+  } else {
+    yield put(fetchLocationsNotOk(locationResponse.data.items));
+  }
+};
+
+export function* locationSaga() {
+  yield takeLatest(FETCH_LOCATIONS, location);
+}
