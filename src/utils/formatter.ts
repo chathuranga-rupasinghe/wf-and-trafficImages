@@ -1,13 +1,13 @@
-export const formatLocationData = (traphicImages: any, weatherResponse:any) => {
-    // console.log({traphicImages, weatherResponse});
-    const {area_metadata, items: [{forecasts}]} = weatherResponse;
+import {ITraficImageType, IWheatherTypes, IAreaMetaDataTypes} from '../types/location';
+
+export const formatLocationData = (traphicImages: ITraficImageType[], weatherResponse:IWheatherTypes) => {
+    const {area_metadata, items: [{forecasts}]} = weatherResponse; // Assume only one element contain in forecast array.
 
 
-    let areas = area_metadata.map((area:any, index: number) => {
-            // console.log('area =>', area.label_location);
-        const matchedImage = traphicImages.find((traphicImage:any) => {
-            return (parseFloat(area.label_location.latitude).toFixed(2) === parseFloat(traphicImage.location.latitude).toFixed(2) &&
-            parseFloat(area.label_location.longitude).toFixed(2) === parseFloat(traphicImage.location.longitude).toFixed(2));
+    let areas = area_metadata.map((area:IAreaMetaDataTypes, index: number) => {
+        const matchedImage = traphicImages.find((traphicImage:ITraficImageType) => {
+            return (area.label_location.latitude.toFixed(2) === traphicImage.location.latitude.toFixed(2) &&
+            area.label_location.longitude.toFixed(2) === traphicImage.location.longitude.toFixed(2));
         });
 
         let areaWithForecasts = {
@@ -18,8 +18,7 @@ export const formatLocationData = (traphicImages: any, weatherResponse:any) => {
 
             return areaWithForecasts;
     });
-
-    console.log({areas});
+    return areas;
     
 
 };

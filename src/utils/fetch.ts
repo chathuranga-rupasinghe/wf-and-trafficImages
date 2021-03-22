@@ -1,14 +1,11 @@
 import axios, {AxiosRequestConfig, Method, Canceler} from 'axios'; 
 
-export const apiCall = (initConfig: {url: string, method:Method}, params: any | undefined = undefined, headers = undefined) => {
-    console.log({params});
+export const apiCall = (initConfig: {url: string, method:Method}, params: object | undefined = undefined, headers = undefined) => {
 
     const config: AxiosRequestConfig = {
         ...initConfig,
         data: params,
       };
-
-      console.log('test',  axios(config));
     
     return axios(config);
       
