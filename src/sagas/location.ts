@@ -8,15 +8,21 @@ import { formatLocationData } from '../utils/formatter';
 
 
 const location = function*({payload}:any) : any{
-  const [locationResponse, trafficImagesResponse] = yield all([
-    apiCall(fetchLocationsApi, {date_time: payload}),
-    apiCall(fetchTraficImagesApi, {date_time: payload})
-  ]);
 
-  if (trafficImagesResponse.data.api_info.status === 'healthy' && locationResponse.data.api_info.status === 'healthy') {
-   const formattedData = formatLocationData(trafficImagesResponse.data['items'][0]['cameras'], locationResponse.data);
-   yield put(fetchLocationsOk(formattedData));
-  } else {
+  try{
+    const [locationResponse, trafficImagesResponse] = yield all([
+      apiCall(fetchLocationsApi, {date_time: payload}),
+      apiCall(fetchTraficImagesApi, {date_time: payload})
+    ]);
+    if (trafficImagesResponse.data.api_info.status === 'healthy' && locationResponse.data.api_info.status === 'healthy') {
+     const formattedData = formatLocationData(trafficImagesResponse.data['items'][0]['cameras'], locationResponse.data);
+     yield put(fetchLocationsOk(formattedData));
+    } else {
+      yield put(fetchLocationsNotOk());
+    }
+  }
+  
+  catch (err){
     yield put(fetchLocationsNotOk());
   }
 };

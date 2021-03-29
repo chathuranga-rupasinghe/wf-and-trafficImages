@@ -4,8 +4,17 @@ export const apiCall = (initConfig: {url: string, method:Method}, params: object
 
     const config: AxiosRequestConfig = {
         ...initConfig,
-        data: params,
       };
+      switch(initConfig?.method) {
+        case 'get':
+          config.params = params;
+          break;
+        case 'post':
+          config.data = params;
+          break;
+        default:
+          config.params = params;
+      }
     
     return axios(config);
       

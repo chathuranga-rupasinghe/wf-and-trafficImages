@@ -4,62 +4,111 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchLocations } from '../actions/location';
 import { ILocationType } from '../types/location';
-import { IAppStateType } from '../types/state'
+import { IAppStateType } from '../types/state';
+import './MainWrapper.css';
+import weatherIcon from '../assets/icons/cloudy.png';
+
+import 'date-fns';
+import Grid from '@material-ui/core/Grid';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardTimePicker,
+    KeyboardDatePicker,
+} from '@material-ui/pickers';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const MainWrapper = () => {
-    const [selectedDate, setSelectedDate] = React.useState("2017-05-24T10:30");
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
+    const [selectedTime, setSelectedTime] = React.useState<Date | null>(new Date());
     const [imgUrl, setImgUrl] = React.useState('');
     const [wheatherForcast, setWheatherForcast] = React.useState('');
+    const [selectedLocation, setSelectedLocation] = React.useState('');
     const { locations } = useSelector((state: IAppStateType) => {
         return state?.location;
     });
     const dispatch = useDispatch()
 
     React.useEffect(() => {
-        dispatch(fetchLocations(selectedDate));
-    }, [selectedDate])
+        const tempTime = selectedTime?.toISOString().split('T') || [];
+
+        const dateTime = selectedDate?.toISOString()?.slice(0, -13) + tempTime[1].slice(0, -5)
+        dispatch(fetchLocations(dateTime));
+    }, [selectedTime])
+
 
     const defaultProps = {
         options: locations || [],
         getOptionLabel: (option: ILocationType) => option?.name,
     };
 
-    const handleDateChange = (date: string) => {
+    const handleDateChange = (date: MaterialUiPickersDate) => {
+        // console.log('date =>', );
         setSelectedDate(date);
+        setWheatherForcast('');
+        setImgUrl('');
+
+    };
+    const handleTimeChange = (time: MaterialUiPickersDate) => {
+        setSelectedTime(time);
+        setWheatherForcast('');
+        setImgUrl('');
+
     };
 
     const changeLoacation = (val: ILocationType | null) => {
         const selectedLocation = locations?.find((item: ILocationType) => {
             return item?.name === val?.name;
         })
+        setSelectedLocation(val?.name || '');
         setImgUrl(selectedLocation?.matchedImage?.image || '');
         setWheatherForcast(selectedLocation?.forecast || '');
     }
 
     return (
-        <>
-            <div>
-                <TextField
-                    id="datetime-local"
-                    label="Next appointment"
-                    type="datetime-local"
-                    defaultValue={selectedDate}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    onChange={(event) => handleDateChange(event.target.value)}
-                />
-                <Autocomplete
-                    {...defaultProps}
-                    id="debug"
-                    onChange={(event, value) => changeLoacation(value)}
-                    debug
-                    renderInput={(params) => <TextField {...params} label="Slect the location" margin="normal" />}
-                />
-                {wheatherForcast && <h1>{wheatherForcast}</h1>}
-                {imgUrl && <img src={imgUrl} />}
+        <div className="mainWrapper">
+            <div className="contentWrapper">
+                <div className="faoreCastHeading"><span className="cloudyPngSpan"><img src={weatherIcon} className="cloudyPng" /></span>Weather Forecast Singapore</div>
+                <div className="inputFields">
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+
+                        <KeyboardDatePicker
+                            margin="normal"
+                            id="date-picker-dialog"
+                            label="Date picker dialog"
+                            format="MM/dd/yyyy"
+                            value={selectedDate}
+                            onChange={handleDateChange}
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                        />
+                        <KeyboardTimePicker
+                            className="timeWrapper"
+                            margin="normal"
+                            id="time-picker"
+                            label="Time picker"
+                            value={selectedTime}
+                            onChange={handleTimeChange}
+                            KeyboardButtonProps={{
+                                'aria-label': 'change time',
+                            }}
+                        />
+                    </MuiPickersUtilsProvider>
+                    <Autocomplete
+                        {...defaultProps}
+                        id="debug"
+                        className="autoCompleteWrapper"
+                        onChange={(event, value) => changeLoacation(value)}
+                        inputValue={selectedLocation}
+                        debug
+                        renderInput={(params) => <TextField {...params} label="Select the location" margin="normal" />}
+                    />
+                </div>
+                {wheatherForcast && <div className="weatherForeCastText">{wheatherForcast}</div>}
+                {imgUrl && <img className="locationImg" src={imgUrl} />}
             </div>
-        </>
+        </div>
     );
 }
 
