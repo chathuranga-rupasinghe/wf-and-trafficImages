@@ -17,7 +17,8 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-
+import { infoMessage, warningMesssage } from '../config/messageConfig'
+import { Message } from '../components/Message'
 const MainWrapper = () => {
     const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
     const [selectedTime, setSelectedTime] = React.useState<Date | null>(new Date());
@@ -27,6 +28,10 @@ const MainWrapper = () => {
     const { locations } = useSelector((state: IAppStateType) => {
         return state?.location;
     });
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
     const dispatch = useDispatch()
 
     React.useEffect(() => {
@@ -83,6 +88,7 @@ const MainWrapper = () => {
                             format="MM/dd/yyyy"
                             value={selectedDate}
                             onChange={handleDateChange}
+                            maxDate={tomorrow}
                             KeyboardButtonProps={{
                                 'aria-label': 'change date',
                             }}
@@ -111,6 +117,8 @@ const MainWrapper = () => {
                 </div>
                 {wheatherForcast && <WheatherForcast wheatherForcast={wheatherForcast} />}
                 {imgUrl && <WheatherImage imgUrl={imgUrl} />}
+                {!locations?.length && <Message message={warningMesssage} />}
+                {(locations?.length !== 0 && !selectedLocation) && <Message message={infoMessage} />}
             </div>
         </div>
     );

@@ -9,6 +9,10 @@ export interface IWheatherForcast {
     wheatherForcast: string;
 }
 
+export interface IMessage {
+    message: string;
+}
+
 export interface IWheatherImage {
     imgUrl: string;
 }
