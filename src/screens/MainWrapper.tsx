@@ -1,4 +1,4 @@
-import React, { ObjectHTMLAttributes } from 'react';
+import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useSelector, useDispatch } from 'react-redux'
@@ -9,7 +9,6 @@ import './MainWrapper.css';
 import weatherIcon from '../assets/icons/cloudy.png';
 
 import 'date-fns';
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -30,11 +29,13 @@ const MainWrapper = () => {
     const dispatch = useDispatch()
 
     React.useEffect(() => {
-        const tempTime = selectedTime?.toISOString().split('T') || [];
+        if (selectedTime) {
+            const tempTime = selectedTime?.toISOString().split('T') || [];
 
-        const dateTime = selectedDate?.toISOString()?.slice(0, -13) + tempTime[1].slice(0, -5)
-        dispatch(fetchLocations(dateTime));
-    }, [selectedTime])
+            const dateTime = selectedDate?.toISOString()?.slice(0, -13) + tempTime[1].slice(0, -5)
+            dispatch(fetchLocations(dateTime));
+        }
+    }, [selectedTime, selectedDate])
 
 
     const defaultProps = {
@@ -47,12 +48,14 @@ const MainWrapper = () => {
         setSelectedDate(date);
         setWheatherForcast('');
         setImgUrl('');
+        setSelectedLocation('');
 
     };
     const handleTimeChange = (time: MaterialUiPickersDate) => {
         setSelectedTime(time);
         setWheatherForcast('');
         setImgUrl('');
+        setSelectedLocation('');
 
     };
 
@@ -105,7 +108,7 @@ const MainWrapper = () => {
                         renderInput={(params) => <TextField {...params} label="Select the location" margin="normal" />}
                     />
                 </div>
-                {wheatherForcast && <div className="weatherForeCastText">{wheatherForcast}</div>}
+                {wheatherForcast && <p className="weatherForeCastText">{wheatherForcast}</p>}
                 {imgUrl && <img className="locationImg" src={imgUrl} />}
             </div>
         </div>
