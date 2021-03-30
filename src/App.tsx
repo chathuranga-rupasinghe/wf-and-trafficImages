@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import MainWrapper from './screens/MainWrapper';
+import MainWrapper from './feature/Dashboard';
 
 
 function App() {

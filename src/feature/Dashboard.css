@@ -35,16 +35,6 @@
 .cloudyPng {
   width: 45px;
 }
-.locationImg {
-  margin: auto;
-  display: block;
-}
-.weatherForeCastText {
-  text-align: center;
-  font-size: 18px;
-  color: #008b8b;
-  font-weight: 600;
-}
 @media only screen and (max-width: 767px) {
   .inputFields {
     display: flex;

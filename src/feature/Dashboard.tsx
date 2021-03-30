@@ -5,9 +5,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { fetchLocations } from '../actions/location';
 import { ILocationType } from '../types/location';
 import { IAppStateType } from '../types/state';
-import './MainWrapper.css';
+import './Dashboard.css';
 import weatherIcon from '../assets/icons/cloudy.png';
-
+import { WheatherImage } from '../components/WheatherImage'
+import { WheatherForcast } from '../components/WheatherForcast'
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -108,8 +109,8 @@ const MainWrapper = () => {
                         renderInput={(params) => <TextField {...params} label="Select the location" margin="normal" />}
                     />
                 </div>
-                {wheatherForcast && <p className="weatherForeCastText">{wheatherForcast}</p>}
-                {imgUrl && <img className="locationImg" src={imgUrl} />}
+                {wheatherForcast && <WheatherForcast wheatherForcast={wheatherForcast} />}
+                {imgUrl && <WheatherImage imgUrl={imgUrl} />}
             </div>
         </div>
     );

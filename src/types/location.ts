@@ -5,7 +5,15 @@ export interface ILocationType {
     name: string;
 }
 
-interface IMachedImageType {
+export interface IWheatherForcast {
+    wheatherForcast: string;
+}
+
+export interface IWheatherImage {
+    imgUrl: string;
+}
+
+export interface IMachedImageType {
     camera_id: string;
     image: string;
 }
